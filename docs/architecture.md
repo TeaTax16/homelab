@@ -25,11 +25,11 @@ there is no public address and port that can be pointed at the host, and no
 router configuration on the customer side can create one.
 
 The design therefore inverts the direction of the connection. Instead of waiting
-for inbound traffic, the host runs a tunnel client that opens an **authenticated
-outbound connection** to a cloud edge and keeps it open. Public requests arrive
-at the provider's edge, are matched against a hostname-to-service ingress
-ruleset, and are carried back down the existing outbound connection to the
-container that should answer them.
+for inbound traffic, the host runs a tunnel client — Cloudflare Tunnel, via the
+`cloudflared` container — that opens an **authenticated outbound connection** to
+the provider's edge and keeps it open. Public requests arrive at that edge, are
+matched against a hostname-to-service ingress ruleset, and are carried back down
+the existing outbound connection to the container that should answer them.
 
 This has a few properties worth stating explicitly:
 
@@ -43,9 +43,9 @@ This has a few properties worth stating explicitly:
   never fall through to an arbitrary internal service.
 
 **Private administration takes a completely different path.** Administrative
-access uses an **encrypted mesh VPN**: enrolled devices form a peer-to-peer
-overlay with per-device identity, and the host administration interface and SSH
-listen only on that overlay. None of it is published through the tunnel, so it
+access uses an **encrypted mesh VPN** (Tailscale, built on WireGuard): enrolled
+devices form a peer-to-peer overlay with per-device identity, and the host
+administration interface and SSH listen only on that overlay. None of it is published through the tunnel, so it
 is not publicly routed and does not appear in DNS. Losing or retiring a device
 is handled by revoking that device's identity rather than by rotating a shared
 secret.
@@ -146,7 +146,7 @@ of the whole design:
 | Zone | Who reaches it | How |
 |---|---|---|
 | Public application surface | Anyone on the internet | Cloud edge → outbound tunnel → explicitly listed services only |
-| Private administration | Enrolled devices only | Encrypted mesh VPN → host UI and SSH |
+| Private administration | Enrolled devices only | Tailscale mesh VPN → host UI and SSH |
 | Host and container runtime | Administrator, locally or over the mesh VPN | Never published publicly |
 
 Supporting rules:

@@ -1,13 +1,49 @@
 # TeaTaxTower — Homelab Infrastructure Case Study
 
-TeaTaxTower is a small self-hosted homelab running Unraid with a Docker-based
-service stack. This repository is a **sanitised case study** of how it is
-designed, operated, and maintained: a set of selected applications is reachable
-remotely from an internet connection sitting behind CGNAT, without exposing the
-host itself and without conventional inbound port forwarding.
+A sanitised case study of a self-hosted **Unraid + Docker** homelab: a handful of
+services published to the internet from behind CGNAT, with host administration
+kept entirely private.
 
-It documents architecture decisions, operational routines, security boundaries,
-and the lessons that came out of running the system — not the system itself.
+## About This Lab:
+- 🖥️ Small-form-factor server running Unraid with a containerised service stack
+- 🌐 Public access with **no inbound port forwarding** — the host dials *out* to a cloud edge
+- 🔐 Administration over an encrypted mesh VPN, never published to the internet
+- 💾 Storage laid out so imports **hardlink** instead of silently duplicating
+- 📋 Runbooks for diagnostics, maintenance, and every failure that has happened once
+- 🧪 Written up as a portfolio case study — [architecture](docs/architecture.md) · [operations](docs/operations.md) · [lessons](docs/lessons-learned.md)
+
+## Platform & OS:
+![Unraid](https://img.shields.io/badge/Unraid-F15A2C?style=for-the-badge&logo=unraid&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+![Bash](https://img.shields.io/badge/Bash-4EAA25?style=for-the-badge&logo=gnubash&logoColor=white)
+
+## Containerisation:
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/Docker%20Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+
+## Networking & Remote Access:
+![Cloudflare Tunnel](https://img.shields.io/badge/Cloudflare%20Tunnel-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
+![Tailscale](https://img.shields.io/badge/Tailscale-242424?style=for-the-badge&logo=tailscale&logoColor=white)
+![WireGuard](https://img.shields.io/badge/WireGuard-88171A?style=for-the-badge&logo=wireguard&logoColor=white)
+![CGNAT](https://img.shields.io/badge/CGNAT-1F2937?style=for-the-badge)
+
+## Storage & Filesystems:
+![XFS](https://img.shields.io/badge/XFS-4B5563?style=for-the-badge)
+![BTRFS](https://img.shields.io/badge/BTRFS-4B5563?style=for-the-badge)
+![Hardlinks](https://img.shields.io/badge/Hardlinks-4B5563?style=for-the-badge)
+![Parity Protection](https://img.shields.io/badge/Parity%20Protection-4B5563?style=for-the-badge)
+
+## Monitoring & Diagnostics:
+![S.M.A.R.T.](https://img.shields.io/badge/S.M.A.R.T.-0A7E8C?style=for-the-badge)
+![smartmontools](https://img.shields.io/badge/smartmontools-0A7E8C?style=for-the-badge)
+![Container Logs](https://img.shields.io/badge/Container%20Logs-0A7E8C?style=for-the-badge)
+
+## Documentation:
+![Markdown](https://img.shields.io/badge/Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white)
+![Mermaid](https://img.shields.io/badge/Mermaid-FF3670?style=for-the-badge&logo=mermaid&logoColor=white)
+![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)
+
+---
 
 > This repository contains sanitised documentation and example configuration
 > only. It deliberately excludes live credentials, real hostnames, IP addresses,
@@ -21,11 +57,11 @@ and the lessons that came out of running the system — not the system itself.
   working data under a shared parent path, so services can be rebuilt from
   images without losing state.
 - **Outbound-tunnel design behind CGNAT.** The connection has no usable public
-  inbound path, so the host makes an authenticated outbound connection to a
-  cloud edge and selected application routes are published through it.
+  inbound path, so the host makes an authenticated outbound connection to the
+  Cloudflare edge and selected application routes are published through it.
 - **Private remote administration over an encrypted mesh VPN.** The management
   UI and SSH are never published to the internet; administration happens over a
-  peer-to-peer overlay between enrolled devices.
+  Tailscale overlay between enrolled devices.
 - **Storage, mount-path, and hardlink considerations.** Related containers share
   a consistent host-level parent mount so imports can hardlink instead of
   duplicating data.
@@ -69,11 +105,12 @@ Encrypted mesh VPN
 | [`examples/`](examples/) | Illustrative, non-deployable configuration and a diagnostic helper script |
 | [`SECURITY.md`](SECURITY.md) | What is excluded from this repository, and how to report a problem |
 
-## Technologies and concepts
+## Concepts covered
 
-Unraid · Docker · container networking · outbound tunnels · encrypted mesh VPN ·
-Linux operations · SMART monitoring · storage and share management · hardlinks
-and filesystem boundaries · backup and recovery planning
+Container networking · outbound tunnel ingress and default-deny routing ·
+overlay/mesh VPN identity and device revocation · Linux operations · share and
+mount-path design · hardlinks and filesystem boundaries · SMART trend
+monitoring · backup versus redundancy and tested recovery
 
 ## Scope
 

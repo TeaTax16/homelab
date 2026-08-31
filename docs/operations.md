@@ -1,8 +1,9 @@
 # Operations
 
-Everything below is written with generic names. Substitute your own container
-names, mount points, and device nodes locally — none of the real values are
-recorded in this repository.
+The stack runs Docker on Unraid, with Cloudflare Tunnel for public ingress and
+Tailscale for private administration. Everything below is written with generic
+container names and paths — substitute your own container names, mount points,
+and device nodes locally. None of the real values are recorded here.
 
 ## Container diagnostics
 

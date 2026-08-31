@@ -1,0 +1,30 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+*credentials*.json
+
+# Local configuration and exports
+config.local.*
+compose.local.*
+docker-compose.override.yml
+*.bak
+*.backup
+*.dump
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db
+
+# Application data and generated output
+appdata/
+data/
+backups/
+media/
+downloads/

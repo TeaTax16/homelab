@@ -1,0 +1,62 @@
+# Illustrative example only — this file is not deployable and is not the
+# configuration used by any live system. Images, ports, and hostnames are
+# placeholders.
+#
+# It exists to show three conventions:
+#   1. persistent service state lives under a predictable appdata path
+#   2. pipeline services share one parent data mount so imports can hardlink
+#   3. secrets are injected from an ignored .env file, never written inline
+
+services:
+  media-service:
+    image: example/media-service:latest
+    container_name: media-service
+    restart: unless-stopped
+    environment:
+      - TZ=Etc/UTC
+    volumes:
+      # persistent configuration and state for this service only
+      - /srv/appdata/media-service:/config
+      # playback is read-only; this service does not import or link
+      - /srv/data/media:/media:ro
+    networks:
+      - lab
+
+  request-service:
+    image: example/request-service:latest
+    container_name: request-service
+    restart: unless-stopped
+    environment:
+      - TZ=Etc/UTC
+      # illustrative value — the real base URL is not published here
+      - BASE_URL=https://requests.example.com
+    volumes:
+      - /srv/appdata/request-service:/config
+      # the shared parent mount: /data/downloads and /data/media sit beneath it,
+      # which is what allows imports to hardlink instead of copy
+      - /srv/data:/data
+    depends_on:
+      - media-service
+    networks:
+      - lab
+
+  tunnel:
+    image: example/tunnel-client:latest
+    container_name: tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      # supplied by an ignored local .env file — see examples/.env.example
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    depends_on:
+      - media-service
+      - request-service
+    networks:
+      - lab
+
+networks:
+  lab:
+    driver: bridge
+
+# Real images, ingress policies, credentials, and routing remain in local
+# untracked configuration and are deliberately absent from this repository.

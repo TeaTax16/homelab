@@ -1,0 +1,10 @@
+# Example only — do not copy live credentials or hostnames into version control.
+tunnel: REPLACE_WITH_TUNNEL_ID
+credentials-file: /etc/cloudflared/REPLACE_WITH_TUNNEL_ID.json
+
+ingress:
+  - hostname: media.example.com
+    service: http://media-service:8096
+  - hostname: requests.example.com
+    service: http://request-service:5055
+  - service: http_status:404
